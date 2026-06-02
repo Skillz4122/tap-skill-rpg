@@ -3,6 +3,7 @@ export const gameState = {
 
   inventory: {
     logs: 0,
+    oakLogs: 0,
   },
 
   skills: {

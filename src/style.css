@@ -131,3 +131,18 @@ button {
   opacity: 0.75;
   cursor: not-allowed;
 }
+
+.tree-select {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 14px 0;
+}
+
+.tree-select-button {
+  border: 3px solid #5b3a1e;
+  border-radius: 14px;
+  padding: 10px;
+  background: #f8d36a;
+  font-weight: 800;
+}
