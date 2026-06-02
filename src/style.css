@@ -106,3 +106,28 @@ button {
   color: white;
   font-size: 0.78rem;
 }
+
+.forest-area {
+  margin-top: 18px;
+  min-height: 560px;
+  border: 4px solid #5b3a1e;
+  border-radius: 24px;
+  padding: 18px;
+  background: rgba(255, 248, 220, 0.92);
+  text-align: center;
+}
+
+.tree-placeholder {
+  width: 220px;
+  height: 220px;
+  border: 4px solid #5b3a1e;
+  border-radius: 28px;
+  background: #b8e986;
+  font-size: 6rem;
+  cursor: pointer;
+}
+
+.tree-placeholder:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+}

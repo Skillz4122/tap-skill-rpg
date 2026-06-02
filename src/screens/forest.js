@@ -1,82 +1,86 @@
+import { renderHomeScreen } from "./home.js";
+import { gameState } from "../systems/state.js";
+import { saveGame } from "../systems/saveSystem.js";
+
+let treeHP = 20;
+let maxTreeHP = 20;
+let isRespawning = false;
+
+function updateForestUI() {
+  document.querySelector("#tree-hp").textContent = `HP: ${treeHP} / ${maxTreeHP}`;
+
+  document.querySelector("#logs").textContent =
+    `Logs: ${gameState.inventory.logs}`;
+
+  document.querySelector("#xp").textContent =
+    `XP: ${gameState.skills.woodcutting.xp}`;
+}
+
 export function renderForestScreen(app) {
-    app.innerHTML = `
+  app.innerHTML = `
     <main class="screen">
       <header class="top-bar">
-        <button class="icon-button" id="back-button">⬅Village</button>
+        <button id="back-button">← Village</button>
         <h2>Woodcutting</h2>
       </header>
 
       <section class="forest-area">
-       <h3>Tree</h3>
+        <h3>Tree</h3>
 
-        <div class="tree-placeholder">
+        <button id="tree-button" class="tree-placeholder">
           🌳
-        </div>
-
-      <p id="tree-hp">HP: 20/20</p>
-      <p id="logs">Logs: 0</p>
-      <p id="xp">XP: 0</p>
-
-        <button id="tree-button">
-          Chop Tree
         </button>
-      </section>
 
+        <p id="tree-hp">HP: ${treeHP} / ${maxTreeHP}</p>
+        <p id="logs">Logs: ${gameState.inventory.logs}</p>
+        <p id="xp">XP: ${gameState.skills.woodcutting.xp}</p>
+
+        <p id="forest-message">Tap the tree to chop wood.</p>
+      </section>
     </main>
   `;
 
-  let treeHP = 20;
-  let logs = 0;
-  let xp = 0;
-
-  function updateForestUI() {
-  document.querySelector("#tree-hp").textContent =
-    `HP: ${treeHP}/20`;
-  if (treeHP <= 0) {
-
-  logs += 2;
-  xp += 10;
-
-  document.querySelector("#tree-button")
-    .disabled = true;
-
-  document.querySelector("#tree-hp")
-    .textContent = "Tree Cut Down";
-
-  setTimeout(() => {
-
-    treeHP = 20;
-
-    document.querySelector("#tree-button")
-      .disabled = false;
-
-    updateForestUI();
-
-  }, 1500);
-}
-
-  document.querySelector("#logs").textContent =
-    `Logs: ${logs}`;
-
-  document.querySelector("#xp").textContent =
-    `XP: ${xp}`;
-}
-
-
-  document
-    .querySelector("#back-button")
-    .addEventListener("click", () => {
-      console.log("Back To Village");
-    });
-
- document
-  .querySelector("#tree-button")
-  .addEventListener("click", () => {
-
-    treeHP--;
-
-    updateForestUI();
-
+  document.querySelector("#back-button").addEventListener("click", () => {
+    renderHomeScreen(app);
   });
 
+  document.querySelector("#tree-button").addEventListener("click", () => {
+    if (isRespawning) return;
+
+    treeHP -= 1;
+
+    if (treeHP <= 0) {
+      treeHP = 0;
+
+      gameState.inventory.logs += 2;
+      gameState.skills.woodcutting.xp += 10;
+      saveGame();
+
+      isRespawning = true;
+
+      updateForestUI();
+
+      document.querySelector("#forest-message").textContent =
+        "+2 Logs, +10 Woodcutting XP";
+
+      document.querySelector("#tree-button").textContent = "🪵";
+      document.querySelector("#tree-button").disabled = true;
+
+      setTimeout(() => {
+        treeHP = maxTreeHP;
+        isRespawning = false;
+
+        document.querySelector("#tree-button").textContent = "🌳";
+        document.querySelector("#tree-button").disabled = false;
+        document.querySelector("#forest-message").textContent =
+          "A new tree appears.";
+
+        updateForestUI();
+      }, 1500);
+
+      return;
+    }
+
+    updateForestUI();
+  });
 }

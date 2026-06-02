@@ -1,5 +1,10 @@
 export const gameState = {
   gold: 0,
+
+  inventory: {
+    logs: 0,
+  },
+
   skills: {
     woodcutting: {
       level: 1,
