@@ -1,139 +1,115 @@
-import { renderHomeScreen } from "./home.js";
 import { gameState } from "../systems/state.js";
 import { saveGame } from "../systems/saveSystem.js";
-import { addXp, getXpForNextLevel } from "../systems/xpSystem.js";
+import { addXp } from "../systems/xpSystem.js";
 import { smithingRecipes } from "../data/smithingRecipes.js";
-
-function craftRecipe(recipe) {
-  const smithing = gameState.skills.smithing;
-
-  if (smithing.level < recipe.levelRequired) {
-    return {
-      success: false,
-      message: `Requires Smithing Lv. ${recipe.levelRequired}.`
-    };
-  }
-
-  if ((gameState.inventory[recipe.inputKey] || 0) < recipe.inputAmount) {
-    return {
-      success: false,
-      message: `Not enough ${recipe.inputName}. Need ${recipe.inputAmount}.`
-    };
-  }
-
-  gameState.inventory[recipe.inputKey] -= recipe.inputAmount;
-
-  gameState.inventory[recipe.outputKey] =
-    (gameState.inventory[recipe.outputKey] || 0) + recipe.outputAmount;
-
-  const xpResult = addXp("smithing", recipe.xp);
-
-  saveGame();
-
-  if (xpResult.leveledUp) {
-    return {
-      success: true,
-      message: `Created ${recipe.outputAmount} ${recipe.outputName}. Smithing Level ${xpResult.level}!`
-    };
-  }
-
-  return {
-    success: true,
-    message: `Created ${recipe.outputAmount} ${recipe.outputName}. +${recipe.xp} Smithing XP.`
-  };
-}
+import { renderHomeScreen } from "./home.js";
 
 function recipeButtonHTML(recipe) {
-  const ownedInput = gameState.inventory[recipe.inputKey] || 0;
-  const ownedOutput = gameState.inventory[recipe.outputKey] || 0;
-  const smithingLevel = gameState.skills.smithing.level;
+  if (!recipe) {
+    console.error("Missing smithing recipe passed to recipeButtonHTML");
+    return "";
+  }
 
-  const isLocked = smithingLevel < recipe.levelRequired;
-  const notEnoughMaterials = ownedInput < recipe.inputAmount;
-  const disabled = isLocked || notEnoughMaterials;
+  const playerLevel = gameState.skills.smithing.level;
+  const ownedInput = gameState.inventory[recipe.inputKey] ?? 0;
 
-  let statusText = "Ready";
+  const hasLevel = playerLevel >= recipe.levelRequired;
+  const hasMaterials = ownedInput >= recipe.inputAmount;
 
-  if (isLocked) {
-    statusText = `Locked: Requires Smithing Lv. ${recipe.levelRequired}`;
-  } else if (notEnoughMaterials) {
-    statusText = `Need ${recipe.inputAmount} ${recipe.inputName}`;
+  const disabled = !hasLevel || !hasMaterials ? "disabled" : "";
+
+  let requirementText = "Ready to craft";
+
+  if (!hasLevel) {
+    requirementText = `Requires Smithing Lv. ${recipe.levelRequired}`;
+  } else if (!hasMaterials) {
+    requirementText = `Need ${recipe.inputAmount} ${recipe.inputKey}`;
   }
 
   return `
-    <div class="smithing-recipe">
-      <h3>${recipe.icon} ${recipe.name}</h3>
-
-      <p>Requires: ${recipe.inputAmount} ${recipe.inputName}</p>
-      <p>Owned: ${ownedInput} ${recipe.inputName}</p>
-      <p>You Have: ${ownedOutput} ${recipe.outputName}</p>
+    <div class="card">
+      <h3>${recipe.name}</h3>
+      <p>Cost: ${recipe.inputAmount} ${recipe.inputKey}</p>
+      <p>Creates: ${recipe.outputAmount} ${recipe.outputKey}</p>
       <p>XP: ${recipe.xp}</p>
-      <p>${statusText}</p>
-
-      <button 
-        class="smithing-craft-button" 
-        data-recipe-id="${recipe.id}"
-        ${disabled ? "disabled" : ""}
-      >
-        ${recipe.type === "bar" ? "Smelt" : "Craft"} ${recipe.name}
-      </button>
+      <p>${requirementText}</p>
+      <button id="craft-${recipe.id}" ${disabled}>Craft</button>
     </div>
   `;
 }
 
-function updateSmithingScreen(app, message = "Choose a recipe.") {
-  const smithing = gameState.skills.smithing;
+function craftRecipe(recipe) {
+  const playerLevel = gameState.skills.smithing.level;
+  const ownedInput = gameState.inventory[recipe.inputKey] ?? 0;
+
+  if (playerLevel < recipe.levelRequired) {
+    return;
+  }
+
+  if (ownedInput < recipe.inputAmount) {
+    return;
+  }
+
+  gameState.inventory[recipe.inputKey] -= recipe.inputAmount;
+
+  if (gameState.inventory[recipe.outputKey] === undefined) {
+    gameState.inventory[recipe.outputKey] = 0;
+  }
+
+  gameState.inventory[recipe.outputKey] += recipe.outputAmount;
+
+ addXp("smithing", recipe.xp);
+
+  saveGame();
+  updateSmithingScreen();
+}
+
+function updateSmithingScreen() {
+  const app = document.querySelector("#app");
+
+  const recipeButtonsHTML = smithingRecipes
+    .map((recipe) => recipeButtonHTML(recipe))
+    .join("");
 
   app.innerHTML = `
-    <main class="screen">
-      <header class="top-bar">
-        <button id="back-button">← Village</button>
-        <h2>Smithing</h2>
-      </header>
+    <div class="screen">
+      <h1>Smithing</h1>
 
-      <section class="smithing-area">
-        <p id="smithing-level">Smithing Lv. ${smithing.level}</p>
+      <p>Smithing Level: ${gameState.skills.smithing.level}</p>
+      <p>Smithing XP: ${gameState.skills.smithing.xp}</p>
 
-        <p id="smithing-xp">
-          XP: ${smithing.xp} / ${getXpForNextLevel(smithing.level)}
-        </p>
+      <h2>Resources</h2>
+      <p>Logs: ${gameState.inventory.logs ?? 0}</p>
+      <p>Oak Logs: ${gameState.inventory.oakLogs ?? 0}</p>
+      <p>Copper Ore: ${gameState.inventory.copperOre ?? 0}</p>
+      <p>Iron Ore: ${gameState.inventory.ironOre ?? 0}</p>
+      <p>Copper Bars: ${gameState.inventory.copperBar ?? 0}</p>
+      <p>Iron Bars: ${gameState.inventory.ironBar ?? 0}</p>
 
-        <p id="smithing-message">${message}</p>
+      <h2>Recipes</h2>
+      ${recipeButtonsHTML}
 
-        <h3>Smelting</h3>
-
-        <div class="smithing-list">
-          ${recipeButtonHTML(smithingRecipes.copperBar)}
-          ${recipeButtonHTML(smithingRecipes.ironBar)}
-        </div>
-
-        <h3>Crafting</h3>
-
-        <div class="smithing-list">
-        ${recipeButtonHTML(smithingRecipes.copperAxe)}
-        ${recipeButtonHTML(smithingRecipes.copperPickaxe)}
-        ${recipeButtonHTML(smithingRecipes.copperSword)}
-        </div>
-      </section>
-    </main>
+      <button id="back-to-village-button">Back to Village</button>
+    </div>
   `;
 
-  document.querySelector("#back-button").addEventListener("click", () => {
-    renderHomeScreen(app);
+  document.querySelector("#back-to-village-button").addEventListener("click", () => {
+    renderHomeScreen();
   });
 
-  document.querySelectorAll(".smithing-craft-button").forEach((button) => {
+  smithingRecipes.forEach((recipe) => {
+    const button = document.querySelector(`#craft-${recipe.id}`);
+
+    if (!button) {
+      return;
+    }
+
     button.addEventListener("click", () => {
-      const recipeId = button.dataset.recipeId;
-      const recipe = smithingRecipes[recipeId];
-
-      const result = craftRecipe(recipe);
-
-      updateSmithingScreen(app, result.message);
+      craftRecipe(recipe);
     });
   });
 }
 
-export function renderSmithingScreen(app) {
-  updateSmithingScreen(app);
+export function renderSmithingScreen() {
+  updateSmithingScreen();
 }

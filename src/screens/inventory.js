@@ -234,6 +234,35 @@ export function renderInventoryScreen(app, message = "") {
                 : ""
             }
           </div>
+           <div class="inventory-item">
+            <span>🪓 Iron Axe</span>
+            <strong>${gameState.inventory.ironAxe || 0}</strong>
+            ${
+              (gameState.inventory.ironAxe || 0) > 0
+                ? `<button class="equip-button" data-item-id="ironAxe">${getEquippedLabel("ironAxe")}</button>`
+                : ""
+            }
+          </div>
+
+          <div class="inventory-item">
+            <span>⛏️ Iron Pickaxe</span>
+            <strong>${gameState.inventory.ironPickaxe || 0}</strong>
+            ${
+              (gameState.inventory.ironPickaxe || 0) > 0
+                ? `<button class="equip-button" data-item-id="ironPickaxe">${getEquippedLabel("ironPickaxe")}</button>`
+                : ""
+            }
+          </div>
+
+          <div class="inventory-item">
+            <span>🗡️ Iron Sword</span>
+            <strong>${gameState.inventory.ironSword || 0}</strong>
+            ${
+              (gameState.inventory.ironSword || 0) > 0
+                ? `<button class="equip-button" data-item-id="ironSword">${getEquippedLabel("ironSword")}</button>`
+                : ""
+            }
+          </div>
         </div>
       </section>
     </main>
