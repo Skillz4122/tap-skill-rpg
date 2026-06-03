@@ -41,12 +41,6 @@ function updateForestUI() {
   document.querySelector("#tree-hp").textContent =
     `HP: ${treeHP} / ${maxTreeHP}`;
 
-  document.querySelector("#logs").textContent =
-    `Logs: ${gameState.inventory.logs}`;
-
-  document.querySelector("#oak-logs").textContent =
-    `Oak Logs: ${gameState.inventory.oakLogs}`;
-
   document.querySelector("#xp").textContent =
     `XP: ${woodcutting.xp} / ${getXpForNextLevel(woodcutting.level)}`;
 }
@@ -72,12 +66,6 @@ export function renderForestScreen(app) {
   </button>
 
   <p id="tree-hp">HP: ${treeHP} / ${maxTreeHP}</p>
-
-  <p id="logs">Logs: ${gameState.inventory.logs}</p>
-
-  <p id="oak-logs" style="${canUseTree(trees.oakTree) || gameState.inventory.oakLogs > 0 ? "" : "display: none;"}">
-    Oak Logs: ${gameState.inventory.oakLogs}
-  </p>
 
   <p id="xp">
     XP: ${woodcutting.xp} / ${getXpForNextLevel(woodcutting.level)}

@@ -4,6 +4,16 @@ export const gameState = {
   inventory: {
     logs: 0,
     oakLogs: 0,
+    copperOre: 0,
+    ironOre: 0
+  },
+
+    equipment: {
+    axe: "starterAxe",
+    pickaxe: null,
+    weapon: null,
+    helmet: null,
+    armor: null,
   },
 
   skills: {

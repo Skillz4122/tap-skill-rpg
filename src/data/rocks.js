@@ -1,0 +1,29 @@
+export const rocks = {
+  copperRock: {
+    id: "copperRock",
+    name: "Copper Rock",
+    levelRequired: 1,
+    hpMin: 18,
+    hpMax: 22,
+    xp: 10,
+    dropMin: 1,
+    dropMax: 3,
+    inventoryKey: "copperOre",
+    icon: "🪨",
+    brokenIcon: "💥"
+  },
+
+  ironRock: {
+    id: "ironRock",
+    name: "Iron Rock",
+    levelRequired: 10,
+    hpMin: 45,
+    hpMax: 55,
+    xp: 35,
+    dropMin: 2,
+    dropMax: 5,
+    inventoryKey: "ironOre",
+    icon: "⛰️",
+    brokenIcon: "💥"
+  }
+};
