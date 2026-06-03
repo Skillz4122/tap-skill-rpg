@@ -15,7 +15,8 @@ export const gameState = {
     ironBar: 0,
     copperAxe: 0,
     copperPickaxe: 0,
-    copperSword: 0
+    copperSword: 0,
+    bread: 0
   },
 
   skills: {
@@ -30,6 +31,10 @@ export const gameState = {
     },
 
     smithing: {
+      level: 1,
+      xp: 0
+    },
+    cooking: {
       level: 1,
       xp: 0
     },

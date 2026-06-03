@@ -4,6 +4,8 @@ import { renderMineScreen } from "./mine.js";
 import { renderInventoryScreen } from "./inventory.js";
 import { renderSmithingScreen } from "./smithing.js";
 import { renderCombatScreen } from "./combat.js";
+import { renderCookingScreen } from "./cooking.js";
+import { renderSkillsScreen } from "./skills.js";
 
 export function renderHomeScreen(app) {
   app.innerHTML = `
@@ -24,17 +26,15 @@ export function renderHomeScreen(app) {
           <button class="activity-button" id="forest-button">🌲 Forest</button>
           <button class="activity-button" id="mine-button">⛏️ Mine</button>
           <button class="activity-button" id="smithing-button">🔨 Blacksmith</button>
-<button id="combat-button" class="activity-button">⚔️ Combat</button>          <button class="activity-button" disabled>🏪 Merchant</button>
-          <button class="activity-button" id="inventory-button">🎒 Inventory</button>      </section>
-
-      <nav class="bottom-nav">
-        <button>Village</button>
-        <button>Inventory</button>
-        <button>Dungeon</button>
-        <button>Merchant</button>
-        <button>Tasks</button>
-      </nav>
-    </main>
+          <button id="combat-button" class="activity-button">⚔️ Combat</button>          
+          <button class="activity-button" disabled>🏪 Merchant</button>
+          <button class="activity-button" id="inventory-button">🎒 Inventory</button>     
+          <button id="cooking-button" class="activity-button">🍞 Cooking</button>
+          <button id="skills-button" class="activity-button">📊 Skills</button>
+          </section>
+          
+    </div>
+          </main>
   `;
 
   document.querySelector("#combat-button").addEventListener("click", () => {
@@ -55,5 +55,13 @@ document.querySelector("#mine-button").addEventListener("click", () => {
 
 document.querySelector("#smithing-button").addEventListener("click", () => {
   renderSmithingScreen(app);
+});
+
+document.querySelector("#cooking-button").addEventListener("click", () => {
+  renderCookingScreen(app);
+});
+
+document.querySelector("#skills-button").addEventListener("click", () => {
+  renderSkillsScreen(app);
 });
 }

@@ -2,6 +2,35 @@ import { renderHomeScreen } from "./home.js";
 import { gameState } from "../systems/state.js";
 import { saveGame } from "../systems/saveSystem.js";
 
+function ensurePlayerState() {
+  if (!gameState.player) {
+    gameState.player = {
+      hp: 30,
+      maxHp: 30
+    };
+  }
+
+  if (gameState.player.maxHp === undefined) {
+    gameState.player.maxHp = 30;
+  }
+
+  if (gameState.player.hp === undefined) {
+    gameState.player.hp = gameState.player.maxHp;
+  }
+}
+
+function ensureEquipmentState() {
+  if (!gameState.equipment) {
+    gameState.equipment = {
+      axe: null,
+      pickaxe: null,
+      weapon: null,
+      helmet: null,
+      armor: null
+    };
+  }
+}
+
 function getItemDisplayName(itemId) {
   const itemNames = {
     copperAxe: "Copper Axe",
@@ -23,15 +52,7 @@ function getItemIcon(itemId) {
 }
 
 function equipItem(itemId) {
-if (!gameState.equipment) {
-  gameState.equipment = {
-    axe: null,
-    pickaxe: null,
-    weapon: null,
-    helmet: null,
-    armor: null
-  };
-}
+  ensureEquipmentState();
 
   if (itemId === "copperAxe") {
     gameState.equipment.axe = "copperAxe";
@@ -46,12 +67,10 @@ if (!gameState.equipment) {
   }
 
   saveGame();
-
-  console.log("Equipped:", gameState.equipment);
 }
 
 function getEquippedLabel(itemId) {
-  if (!gameState.equipment) return "Equip";
+  ensureEquipmentState();
 
   if (gameState.equipment.axe === itemId) return "Equipped";
   if (gameState.equipment.pickaxe === itemId) return "Equipped";
@@ -62,15 +81,35 @@ function getEquippedLabel(itemId) {
   return "Equip";
 }
 
-export function renderInventoryScreen(app) {
-  const equipment = gameState.equipment || {
-    axe: null,
-    pickaxe: null,
-    weapon: null,
-    helmet: null,
-    armor: null
-  };
-  
+function useBread() {
+  ensurePlayerState();
+
+  if ((gameState.inventory.bread || 0) <= 0) {
+    return "You do not have any Bread.";
+  }
+
+  if (gameState.player.hp >= gameState.player.maxHp) {
+    return "HP is already full.";
+  }
+
+  gameState.inventory.bread -= 1;
+  gameState.player.hp += 10;
+
+  if (gameState.player.hp > gameState.player.maxHp) {
+    gameState.player.hp = gameState.player.maxHp;
+  }
+
+  saveGame();
+
+  return "You ate Bread and restored 10 HP.";
+}
+
+export function renderInventoryScreen(app, message = "") {
+  ensurePlayerState();
+  ensureEquipmentState();
+
+  const equipment = gameState.equipment;
+
   app.innerHTML = `
     <main class="screen">
       <header class="top-bar">
@@ -111,55 +150,91 @@ export function renderInventoryScreen(app) {
             <span>🔘 Iron Bar</span>
             <strong>${gameState.inventory.ironBar || 0}</strong>
           </div>
-
-         <h3>Equipped Gear</h3>
-
-<div class="inventory-list">
-  <div class="inventory-item">
-    <span>${getItemIcon(equipment.axe)} Axe</span>
-    <strong>${getItemDisplayName(equipment.axe)}</strong>
-  </div>
-
-  <div class="inventory-item">
-    <span>${getItemIcon(equipment.pickaxe)} Pickaxe</span>
-    <strong>${getItemDisplayName(equipment.pickaxe)}</strong>
-  </div>
-
-  <div class="inventory-item">
-    <span>${getItemIcon(equipment.weapon)} Weapon</span>
-    <strong>${getItemDisplayName(equipment.weapon)}</strong>
-  </div>
-
-  <div class="inventory-item">
-    <span>🪖 Helmet</span>
-    <strong>${getItemDisplayName(equipment.helmet)}</strong>
-  </div>
-
-  <div class="inventory-item">
-    <span>🛡️ Armor</span>
-    <strong>${getItemDisplayName(equipment.armor)}</strong>
-  </div>
-</div>
-
-         <div class="inventory-item">
-        <span>🪓 Copper Axe</span>
-        <strong>${gameState.inventory.copperAxe || 0}</strong>
-         ${(gameState.inventory.copperAxe || 0) > 0? `<button class="equip-button" data-item-id="copperAxe">${getEquippedLabel("copperAxe")}</button>`: ""}
         </div>
 
-        <div class="inventory-item">
-          <span>⛏️ Copper Pickaxe</span>
-          <strong>${gameState.inventory.copperPickaxe || 0}</strong>
-          ${(gameState.inventory.copperPickaxe || 0) > 0? `<button class="equip-button" data-item-id="copperPickaxe">${getEquippedLabel("copperPickaxe")}</button>`: ""}
+        <h3>Consumables</h3>
+
+        <div class="inventory-list">
+          <div class="inventory-item">
+            <span>🍞 Bread</span>
+            <strong>${gameState.inventory.bread || 0}</strong>
+            ${
+              (gameState.inventory.bread || 0) > 0
+                ? `<button class="use-bread-button">Use</button>`
+                : ""
+            }
+          </div>
+
+          <div class="inventory-item">
+            <span>❤️ HP</span>
+            <strong>${gameState.player.hp} / ${gameState.player.maxHp}</strong>
+          </div>
         </div>
 
-        <div class="inventory-item">
-          <span>🗡️ Copper Sword</span>
-          <strong>${gameState.inventory.copperSword || 0}</strong>
-          ${(gameState.inventory.copperSword || 0) > 0? `<button class="equip-button" data-item-id="copperSword">${getEquippedLabel("copperSword")}</button>`: ""}
+        <p id="inventory-message">${message}</p>
+
+        <h3>Equipped Gear</h3>
+
+        <div class="inventory-list">
+          <div class="inventory-item">
+            <span>${getItemIcon(equipment.axe)} Axe</span>
+            <strong>${getItemDisplayName(equipment.axe)}</strong>
+          </div>
+
+          <div class="inventory-item">
+            <span>${getItemIcon(equipment.pickaxe)} Pickaxe</span>
+            <strong>${getItemDisplayName(equipment.pickaxe)}</strong>
+          </div>
+
+          <div class="inventory-item">
+            <span>${getItemIcon(equipment.weapon)} Weapon</span>
+            <strong>${getItemDisplayName(equipment.weapon)}</strong>
+          </div>
+
+          <div class="inventory-item">
+            <span>🪖 Helmet</span>
+            <strong>${getItemDisplayName(equipment.helmet)}</strong>
+          </div>
+
+          <div class="inventory-item">
+            <span>🛡️ Armor</span>
+            <strong>${getItemDisplayName(equipment.armor)}</strong>
+          </div>
         </div>
 
-      </div>
+        <h3>Gear</h3>
+
+        <div class="inventory-list">
+          <div class="inventory-item">
+            <span>🪓 Copper Axe</span>
+            <strong>${gameState.inventory.copperAxe || 0}</strong>
+            ${
+              (gameState.inventory.copperAxe || 0) > 0
+                ? `<button class="equip-button" data-item-id="copperAxe">${getEquippedLabel("copperAxe")}</button>`
+                : ""
+            }
+          </div>
+
+          <div class="inventory-item">
+            <span>⛏️ Copper Pickaxe</span>
+            <strong>${gameState.inventory.copperPickaxe || 0}</strong>
+            ${
+              (gameState.inventory.copperPickaxe || 0) > 0
+                ? `<button class="equip-button" data-item-id="copperPickaxe">${getEquippedLabel("copperPickaxe")}</button>`
+                : ""
+            }
+          </div>
+
+          <div class="inventory-item">
+            <span>🗡️ Copper Sword</span>
+            <strong>${gameState.inventory.copperSword || 0}</strong>
+            ${
+              (gameState.inventory.copperSword || 0) > 0
+                ? `<button class="equip-button" data-item-id="copperSword">${getEquippedLabel("copperSword")}</button>`
+                : ""
+            }
+          </div>
+        </div>
       </section>
     </main>
   `;
@@ -169,12 +244,22 @@ export function renderInventoryScreen(app) {
   });
 
   document.querySelectorAll(".equip-button").forEach((button) => {
-  button.addEventListener("click", () => {
-    const itemId = button.dataset.itemId;
+    button.addEventListener("click", () => {
+      const itemId = button.dataset.itemId;
 
-    equipItem(itemId);
+      equipItem(itemId);
 
-    renderInventoryScreen(app);
+      renderInventoryScreen(app);
+    });
   });
-});
+
+  const useBreadButton = document.querySelector(".use-bread-button");
+
+  if (useBreadButton) {
+    useBreadButton.addEventListener("click", () => {
+      const resultMessage = useBread();
+
+      renderInventoryScreen(app, resultMessage);
+    });
+  }
 }
