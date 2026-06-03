@@ -52,32 +52,32 @@ export function renderMineScreen(app) {
 
   spawnRock();
 
-  app.innerHTML = `
-    <main class="screen">
-      <header class="top-bar">
-        <button id="back-button">← Village</button>
-        <h2>Mining</h2>
-      </header>
+app.innerHTML = `
+  <main class="screen">
+    <header class="top-bar">
+      <button id="back-button">← Village</button>
+      <h2>Mining</h2>
+    </header>
 
-      <section class="mine-area">
-        <p id="mining-level">Mining Lv. ${mining.level}</p>
+    <section class="mine-area">
+      <p id="mining-level">Mining Lv. ${mining.level}</p>
 
-        <h3 id="rock-name">${currentRock.name}</h3>
+      <h3 id="rock-name">${currentRock.name}</h3>
 
-        <button id="rock-button" class="rock-placeholder">
-          ${currentRock.icon}
-        </button>
+      <button id="rock-button" class="rock-placeholder">
+        ${currentRock.icon}
+      </button>
 
-        <p id="rock-hp">HP: ${rockHP} / ${maxRockHP}</p>
+      <p id="rock-hp">HP: ${rockHP} / ${maxRockHP}</p>
 
-        <p id="xp">
-          XP: ${mining.xp} / ${getXpForNextLevel(mining.level)}
-        </p>
+      <p id="xp">
+        XP: ${mining.xp} / ${getXpForNextLevel(mining.level)}
+      </p>
 
-        <p id="mine-message">Tap the rock to mine ore.</p>
-      </section>
-    </main>
-  `;
+      <p id="mine-message">Tap the rock to mine ore.</p>
+    </section>
+  </main>
+`;
 
   document.querySelector("#back-button").addEventListener("click", () => {
     renderHomeScreen(app);

@@ -5,7 +5,9 @@ export const gameState = {
     logs: 0,
     oakLogs: 0,
     copperOre: 0,
-    ironOre: 0
+    ironOre: 0,
+    copperBar: 0,
+    ironBar: 0,
   },
 
     equipment: {

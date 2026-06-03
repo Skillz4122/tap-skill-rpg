@@ -29,8 +29,18 @@ export function renderInventoryScreen(app) {
           </div>
 
           <div class="inventory-item">
-            <span>⚙️ Iron Ore</span>
+            <span>🪨 Iron Ore</span>
             <strong>${gameState.inventory.ironOre || 0}</strong>
+          </div>
+
+          <div class="inventory-item">
+            <span>🔶 Copper Bar</span>
+            <strong>${gameState.inventory.copperBar || 0}</strong>
+          </div>
+
+          <div class="inventory-item">
+            <span>🔘 Iron Bar</span>
+            <strong>${gameState.inventory.ironBar || 0}</strong>
           </div>
         </div>
       </section>

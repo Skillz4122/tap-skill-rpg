@@ -2,6 +2,7 @@ import { gameState } from "../systems/state.js";
 import { renderForestScreen } from "./forest.js";
 import { renderMineScreen } from "./mine.js";
 import { renderInventoryScreen } from "./inventory.js";
+import { renderSmithingScreen } from "./smithing.js";
 
 export function renderHomeScreen(app) {
   app.innerHTML = `
@@ -21,10 +22,10 @@ export function renderHomeScreen(app) {
         <div class="activity-grid">
           <button class="activity-button" id="forest-button">🌲 Forest</button>
           <button class="activity-button" id="mine-button">⛏️ Mine</button>
-          <button class="activity-button" disabled>🔨 Blacksmith</button>
+          <button class="activity-button" id="smithing-button">🔨 Blacksmith</button>
           <button class="activity-button" disabled>🕳️ Dungeon</button>
           <button class="activity-button" disabled>🏪 Merchant</button>
-<button class="activity-button" id="inventory-button">🎒 Inventory</button>      </section>
+          <button class="activity-button" id="inventory-button">🎒 Inventory</button>      </section>
 
       <nav class="bottom-nav">
         <button>Village</button>
@@ -46,5 +47,9 @@ export function renderHomeScreen(app) {
 
 document.querySelector("#mine-button").addEventListener("click", () => {
   renderMineScreen(app);
+});
+
+document.querySelector("#smithing-button").addEventListener("click", () => {
+  renderSmithingScreen(app);
 });
 }
