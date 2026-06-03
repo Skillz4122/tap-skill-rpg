@@ -2,30 +2,28 @@ export const trees = {
   tree: {
     id: "tree",
     name: "Tree",
-    resourceName: "Logs",
-    inventoryKey: "logs",
     levelRequired: 1,
     hpMin: 18,
     hpMax: 22,
-    xp: 10000,
+    xp: 10,
     dropMin: 1,
     dropMax: 3,
+    inventoryKey: "logs",
     icon: "🌳",
-    brokenIcon: "🪵",
+    brokenIcon: "🪵"
   },
 
   oakTree: {
     id: "oakTree",
     name: "Oak Tree",
-    resourceName: "Oak Logs",
-    inventoryKey: "oakLogs",
     levelRequired: 10,
     hpMin: 45,
     hpMax: 55,
     xp: 35,
     dropMin: 2,
     dropMax: 5,
+    inventoryKey: "oakLogs",
     icon: "🌲",
-    brokenIcon: "🪵",
-  },
+    brokenIcon: "🪵"
+  }
 };

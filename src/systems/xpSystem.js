@@ -1,37 +1,32 @@
-addXp("woodcutting", 10);
-
 import { gameState } from "./state.js";
-import { saveGame } from "./saveSystem.js";
 
 export function getXpForNextLevel(level) {
-  return Math.floor(100 * Math.pow(1.5, level - 1));
+  return level * 100;
 }
 
-export function addXp(skillName, amount) {
+export function addXp(skillName, xpAmount) {
   const skill = gameState.skills[skillName];
 
   if (!skill) {
-    console.error(`Skill "${skillName}" does not exist.`);
-    return;
+    console.error(`Skill not found: ${skillName}`);
+    return {
+      leveledUp: false,
+      level: 1
+    };
   }
 
-  skill.xp += amount;
+  skill.xp += xpAmount;
 
   let leveledUp = false;
 
-  while (skill.level < 20 && skill.xp >= getXpForNextLevel(skill.level)) {
+  while (skill.xp >= getXpForNextLevel(skill.level)) {
     skill.xp -= getXpForNextLevel(skill.level);
     skill.level += 1;
     leveledUp = true;
   }
 
-  saveGame();
-
   return {
-    level: skill.level,
-    xp: skill.xp,
-    xpToNext: getXpForNextLevel(skill.level),
     leveledUp,
+    level: skill.level
   };
 }
-

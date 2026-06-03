@@ -1,8 +1,6 @@
+import { renderMainMenu } from "./screens/mainMenu.js";
 import "./style.css";
-import { renderHomeScreen } from "./screens/home.js";
-import { loadGame } from "./systems/saveSystem.js";
 
 const app = document.querySelector("#app");
 
-loadGame();
-renderHomeScreen(app);
+renderMainMenu(app);

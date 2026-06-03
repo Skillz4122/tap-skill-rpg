@@ -116,11 +116,20 @@ export function renderForestScreen(app) {
         currentTree.dropMax
       );
 
-      gameState.inventory[currentTree.inventoryKey] += dropsEarned;
+console.log("TREE REWARD DEBUG");
+console.log("Current tree:", currentTree);
+console.log("Inventory key:", currentTree.inventoryKey);
+console.log("Drops earned:", dropsEarned);
+console.log("Logs before:", gameState.inventory.logs);
 
-      const xpResult = addXp("woodcutting", currentTree.xp);
+gameState.inventory[currentTree.inventoryKey] =
+  (gameState.inventory[currentTree.inventoryKey] || 0) + dropsEarned;
 
-      saveGame();
+const xpResult = addXp("woodcutting", currentTree.xp);
+
+saveGame();
+
+console.log("Saved data:", localStorage.getItem("stonehollowSave"));
 
       isRespawning = true;
 
