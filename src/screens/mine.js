@@ -9,6 +9,14 @@ let rockHP = randomBetween(currentRock.hpMin, currentRock.hpMax);
 let maxRockHP = rockHP;
 let isRespawning = false;
 
+function getPickaxeDamage() {
+  if (gameState.equipment && gameState.equipment.pickaxe === "copperPickaxe") {
+    return 2;
+  }
+
+  return 1;
+}
+
 function randomBetween(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -86,7 +94,7 @@ app.innerHTML = `
   document.querySelector("#rock-button").addEventListener("click", () => {
     if (isRespawning) return;
 
-    rockHP -= 1;
+    rockHP -= getPickaxeDamage();
 
     if (rockHP <= 0) {
       rockHP = 0;
@@ -127,21 +135,26 @@ app.innerHTML = `
 
       document.querySelector("#rock-button").disabled = true;
 
-      setTimeout(() => {
-        spawnRock();
+     setTimeout(() => {
+  const rockButton = document.querySelector("#rock-button");
+  const mineMessage = document.querySelector("#mine-message");
 
-        isRespawning = false;
+  if (!rockButton || !mineMessage) {
+    isRespawning = false;
+    return;
+  }
 
-        document.querySelector("#rock-button").textContent =
-          currentRock.icon;
+  spawnRock();
 
-        document.querySelector("#rock-button").disabled = false;
+  isRespawning = false;
 
-        document.querySelector("#mine-message").textContent =
-          `A new ${currentRock.name} appears.`;
+  rockButton.textContent = currentRock.icon;
+  rockButton.disabled = false;
 
-        updateMineUI();
-      }, 1500);
+  mineMessage.textContent = `A new ${currentRock.name} appears.`;
+
+  updateMineUI();
+}, 1500);
 
       return;
     }

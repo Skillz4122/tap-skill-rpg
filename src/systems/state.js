@@ -8,10 +8,14 @@ export const gameState = {
     ironOre: 0,
     copperBar: 0,
     ironBar: 0,
+    
+    copperAxe: 0,
+    copperPickaxe: 0,
+    copperSword: 0
   },
 
     equipment: {
-    axe: "starterAxe",
+    axe: null,
     pickaxe: null,
     weapon: null,
     helmet: null,

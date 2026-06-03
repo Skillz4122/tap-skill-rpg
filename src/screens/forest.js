@@ -26,6 +26,14 @@ function spawnTree() {
   maxTreeHP = treeHP;
 }
 
+function getAxeDamage() {
+  if (gameState.equipment && gameState.equipment.axe === "copperAxe") {
+    return 2;
+  }
+
+  return 1;
+}
+
 function canUseTree(tree) {
   return gameState.skills.woodcutting.level >= tree.levelRequired;
 }
@@ -83,7 +91,7 @@ export function renderForestScreen(app) {
   document.querySelector("#tree-button").addEventListener("click", () => {
     if (isRespawning) return;
 
-    treeHP -= 1;
+    treeHP -= getAxeDamage();
 
     if (treeHP <= 0) {
       treeHP = 0;
@@ -125,18 +133,26 @@ export function renderForestScreen(app) {
       document.querySelector("#tree-button").textContent = currentTree.brokenIcon;
       document.querySelector("#tree-button").disabled = true;
 
-      setTimeout(() => {
-        spawnTree();
+    setTimeout(() => {
+  const treeButton = document.querySelector("#tree-button");
+  const forestMessage = document.querySelector("#forest-message");
 
-        isRespawning = false;
+  if (!treeButton || !forestMessage) {
+    isRespawning = false;
+    return;
+  }
 
-        document.querySelector("#tree-button").textContent = currentTree.icon;
-        document.querySelector("#tree-button").disabled = false;
-        document.querySelector("#forest-message").textContent =
-          `A new ${currentTree.name} appears.`;
+  spawnTree();
 
-        updateForestUI();
-      }, 1500);
+  isRespawning = false;
+
+  treeButton.textContent = currentTree.icon;
+  treeButton.disabled = false;
+
+  forestMessage.textContent = `A new ${currentTree.name} appears.`;
+
+  updateForestUI();
+}, 1500);
 
       return;
     }

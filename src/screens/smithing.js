@@ -4,17 +4,7 @@ import { saveGame } from "../systems/saveSystem.js";
 import { addXp, getXpForNextLevel } from "../systems/xpSystem.js";
 import { smithingRecipes } from "../data/smithingRecipes.js";
 
-function canSmelt(recipe) {
-  const smithingLevel = gameState.skills.smithing.level;
-  const inputAmountOwned = gameState.inventory[recipe.inputKey] || 0;
-
-  return (
-    smithingLevel >= recipe.levelRequired &&
-    inputAmountOwned >= recipe.inputAmount
-  );
-}
-
-function smeltRecipe(recipe) {
+function craftRecipe(recipe) {
   const smithing = gameState.skills.smithing;
 
   if (smithing.level < recipe.levelRequired) {
@@ -32,6 +22,7 @@ function smeltRecipe(recipe) {
   }
 
   gameState.inventory[recipe.inputKey] -= recipe.inputAmount;
+
   gameState.inventory[recipe.outputKey] =
     (gameState.inventory[recipe.outputKey] || 0) + recipe.outputAmount;
 
@@ -56,6 +47,7 @@ function recipeButtonHTML(recipe) {
   const ownedInput = gameState.inventory[recipe.inputKey] || 0;
   const ownedOutput = gameState.inventory[recipe.outputKey] || 0;
   const smithingLevel = gameState.skills.smithing.level;
+
   const isLocked = smithingLevel < recipe.levelRequired;
   const notEnoughMaterials = ownedInput < recipe.inputAmount;
   const disabled = isLocked || notEnoughMaterials;
@@ -79,17 +71,17 @@ function recipeButtonHTML(recipe) {
       <p>${statusText}</p>
 
       <button 
-        class="smelt-button" 
+        class="smithing-craft-button" 
         data-recipe-id="${recipe.id}"
         ${disabled ? "disabled" : ""}
       >
-        Smelt ${recipe.name}
+        ${recipe.type === "bar" ? "Smelt" : "Craft"} ${recipe.name}
       </button>
     </div>
   `;
 }
 
-function updateSmithingScreen(app, message = "Choose a recipe to smelt.") {
+function updateSmithingScreen(app, message = "Choose a recipe.") {
   const smithing = gameState.skills.smithing;
 
   app.innerHTML = `
@@ -108,9 +100,19 @@ function updateSmithingScreen(app, message = "Choose a recipe to smelt.") {
 
         <p id="smithing-message">${message}</p>
 
+        <h3>Smelting</h3>
+
         <div class="smithing-list">
           ${recipeButtonHTML(smithingRecipes.copperBar)}
           ${recipeButtonHTML(smithingRecipes.ironBar)}
+        </div>
+
+        <h3>Crafting</h3>
+
+        <div class="smithing-list">
+        ${recipeButtonHTML(smithingRecipes.copperAxe)}
+        ${recipeButtonHTML(smithingRecipes.copperPickaxe)}
+        ${recipeButtonHTML(smithingRecipes.copperSword)}
         </div>
       </section>
     </main>
@@ -120,12 +122,12 @@ function updateSmithingScreen(app, message = "Choose a recipe to smelt.") {
     renderHomeScreen(app);
   });
 
-  document.querySelectorAll(".smelt-button").forEach((button) => {
+  document.querySelectorAll(".smithing-craft-button").forEach((button) => {
     button.addEventListener("click", () => {
       const recipeId = button.dataset.recipeId;
       const recipe = smithingRecipes[recipeId];
 
-      const result = smeltRecipe(recipe);
+      const result = craftRecipe(recipe);
 
       updateSmithingScreen(app, result.message);
     });
