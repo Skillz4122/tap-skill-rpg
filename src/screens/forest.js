@@ -51,7 +51,13 @@ function updateForestUI() {
 
   document.querySelector("#xp").textContent =
     `XP: ${woodcutting.xp} / ${getXpForNextLevel(woodcutting.level)}`;
+
+    const woodcuttingPower = document.querySelector("#woodcutting-power");
+
+if (woodcuttingPower) {
+  woodcuttingPower.textContent = `Power: ${getAxeDamage()}`;
 }
+  }
 
 export function renderForestScreen(app) {
   const woodcutting = gameState.skills.woodcutting;
@@ -64,20 +70,29 @@ export function renderForestScreen(app) {
       </header>
 
      <section class="forest-area">
-  <p id="woodcutting-level">Woodcutting Lv. ${woodcutting.level}</p>
+ <div class="forest-stats">
+  <div class="forest-stat-card" id="woodcutting-level">
+    Woodcutting Lv. ${woodcutting.level}
+  </div>
 
-
-  <h3 id="tree-name">${currentTree.name}</h3>
-
-  <button id="tree-button" class="tree-placeholder">
-    ${currentTree.icon}
-  </button>
-
-  <p id="tree-hp">HP: ${treeHP} / ${maxTreeHP}</p>
-
-  <p id="xp">
+  <div class="forest-stat-card" id="xp">
     XP: ${woodcutting.xp} / ${getXpForNextLevel(woodcutting.level)}
-  </p>
+  </div>
+
+  <div class="forest-stat-card" id="tree-hp">
+    HP: ${treeHP} / ${maxTreeHP}
+  </div>
+
+  <div class="forest-stat-card" id="woodcutting-power">
+  Power: ${getAxeDamage()}
+</div>
+</div>
+
+<h3 id="tree-name">${currentTree.name}</h3>
+
+<button id="tree-button" class="tree-placeholder">
+  ${currentTree.icon}
+</button>
 
   <p id="forest-message">Tap the tree to chop wood.</p>
 </section>

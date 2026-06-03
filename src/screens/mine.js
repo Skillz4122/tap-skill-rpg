@@ -53,6 +53,12 @@ function updateMineUI() {
 
   document.querySelector("#xp").textContent =
     `XP: ${mining.xp} / ${getXpForNextLevel(mining.level)}`;
+
+    const miningPower = document.querySelector("#mining-power");
+
+if (miningPower) {
+  miningPower.textContent = `Power: ${getPickaxeDamage()}`;
+}
 }
 
 export function renderMineScreen(app) {
@@ -68,20 +74,29 @@ app.innerHTML = `
     </header>
 
     <section class="mine-area">
-      <p id="mining-level">Mining Lv. ${mining.level}</p>
+      <div class="mine-stats">
+  <div class="mine-stat-card" id="mining-level">
+    Mining Lv. ${mining.level}
+  </div>
 
-      <h3 id="rock-name">${currentRock.name}</h3>
+  <div class="mine-stat-card" id="xp">
+    XP: ${mining.xp} / ${getXpForNextLevel(mining.level)}
+  </div>
 
-      <button id="rock-button" class="rock-placeholder">
-        ${currentRock.icon}
-      </button>
+  <div class="mine-stat-card" id="rock-hp">
+    HP: ${rockHP} / ${maxRockHP}
+  </div>
 
-      <p id="rock-hp">HP: ${rockHP} / ${maxRockHP}</p>
+<div class="mine-stat-card" id="mining-power">
+  Power: ${getPickaxeDamage()}
+</div>
+</div>
 
-      <p id="xp">
-        XP: ${mining.xp} / ${getXpForNextLevel(mining.level)}
-      </p>
+<h3 id="rock-name">${currentRock.name}</h3>
 
+<button id="rock-button" class="rock-placeholder">
+  ${currentRock.icon}
+</button>
       <p id="mine-message">Tap the rock to mine ore.</p>
     </section>
   </main>

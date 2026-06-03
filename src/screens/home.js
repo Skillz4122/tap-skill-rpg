@@ -3,6 +3,7 @@ import { renderForestScreen } from "./forest.js";
 import { renderMineScreen } from "./mine.js";
 import { renderInventoryScreen } from "./inventory.js";
 import { renderSmithingScreen } from "./smithing.js";
+import { renderCombatScreen } from "./combat.js";
 
 export function renderHomeScreen(app) {
   app.innerHTML = `
@@ -23,8 +24,7 @@ export function renderHomeScreen(app) {
           <button class="activity-button" id="forest-button">🌲 Forest</button>
           <button class="activity-button" id="mine-button">⛏️ Mine</button>
           <button class="activity-button" id="smithing-button">🔨 Blacksmith</button>
-          <button class="activity-button" disabled>🕳️ Dungeon</button>
-          <button class="activity-button" disabled>🏪 Merchant</button>
+<button id="combat-button" class="activity-button">⚔️ Combat</button>          <button class="activity-button" disabled>🏪 Merchant</button>
           <button class="activity-button" id="inventory-button">🎒 Inventory</button>      </section>
 
       <nav class="bottom-nav">
@@ -36,6 +36,10 @@ export function renderHomeScreen(app) {
       </nav>
     </main>
   `;
+
+  document.querySelector("#combat-button").addEventListener("click", () => {
+  renderCombatScreen(app);
+});
 
   document.querySelector("#forest-button").addEventListener("click", () => {
     renderForestScreen(app);
